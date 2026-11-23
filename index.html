@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Piano Virtual + Chord Mode, Mic FX, Teleprompter & Recorder</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      text-align: center;
+      background: #121216;
+      color: #f3f4f6;
+      margin: 0;
+      padding: 20px;
+    }
+    h2 { margin-top: 0; margin-bottom: 14px; }
+    .main-layout {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+    .container {
+      position: relative;
+      width: 640px;
+      height: 480px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #000;
+      border: 1px solid #2a2a35;
+    }
+    video {
+      display: none;
+    }
+    canvas {
+      width: 640px;
+      height: 480px;
+      display: block;
+    }
+    .fx-panel {
+      width: 360px;
+      background: #1c1c24;
+      border: 1px solid #2e2e3a;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: left;
+    }
+    .fx-panel h3 {
+      margin: 0 0 12px 0;
+      font-size: 16px;
+      color: #60a5fa;
+    }
+    .slider-group {
+      margin-bottom: 12px;
+    }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: #d1d5db;
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: #3b82f6;
+      cursor: pointer;
+    }
+    select, input[type="text"], textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 6px;
+      background: #272733;
+      color: #fff;
+      border: 1px solid #3f3f52;
+      font-family: inherit;
+      font-size: 13px;
+    }
+    select { margin-bottom: 12px; }
+    .controls {
+      margin-top: 16px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    button {
+      padding: 9px 16px;
+      font-size: 13.5px;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: opacity 0.15s ease;
+    }
+    button:hover { opacity: 0.92; }
+    #btnStart { background: #22c55e; color: #052e16; }
+    #btnPlayMode { background: #6366f1; color: #fff; display: none; }
+    #btnPlayMode.chord-active { background: #a855f7; color: #fff; }
+    #btnMicToggle { background: #3b82f6; color: #fff; display: none; }
+    #btnMicToggle.muted { background: #4b5563; color: #e5e7eb; }
+    #btnRecord { background: #ef4444; color: #fff; display: none; }
+    #btnStop { background: #eab308; color: #1c1917; display: none; }
+    .btn-secondary { background: #313142; color: #e5e7eb; }
+    .btn-accent { background: #8b5cf6; color: #fff; }
+    .status {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #9ca3af;
+    }
+    .rec-badge {
+      color: #f87171;
+      font-weight: 700;
+    }
+
+    /* Songbook & Teleprompter Section */
+    .songbook-section {
+      max-width: 1020px;
+      margin: 22px auto 0 auto;
+      background: #1c1c24;
+      border: 1px solid #2e2e3a;
+      border-radius: 10px;
+      padding: 18px;
+      text-align: left;
+    }
+    .songbook-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .songbook-header h3 {
+      margin: 0;
+      font-size: 17px;
+      color: #a78bfa;
+    }
+    .song-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+    .song-toolbar select {
+      width: auto;
+      min-width: 220px;
+      margin-bottom: 0;
+    }
+    .chord-guide {
+      background: #14141b;
+      border: 1px solid #2b2b38;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+    .chord-pill {
+      display: inline-block;
+      background: #27273a;
+      color: #93c5fd;
+      border: 1px solid #3b3b54;
+      border-radius: 5px;
+      padding: 2px 8px;
+      margin: 2px 4px 2px 0;
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .teleprompter-box {
+      background: #0e0e13;
+      border: 1px solid #2c2c3a;
+      border-radius: 8px;
+      padding: 18px;
+      max-height: 270px;
+      overflow-y: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 16px;
+      line-height: 1.75;
+      white-space: pre-wrap;
+      color: #f9fafb;
+    }
+    .chord-tag {
+      color: #fbbf24;
+      font-weight: 700;
+    }
+    .custom-song-form {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #2e2e3a;
+      display: none;
+    }
+    .custom-song-form.active {
+      display: block;
+    }
+    .form-row {
+      margin-bottom: 10px;
+    }
+    .form-row label {
+      display: block;
+      font-size: 12.5px;
+      color: #cbd5e1;
+      margin-bottom: 4px;
+    }
+    .scroll-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      color: #d1d5db;
+    }
+    .scroll-control input[type="range"] {
+      width: 90px;
+    }
+  </style>
+
+  <!-- MediaPipe & Tone.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+</head>
+<body>
+
+  <h2>Piano Virtual + Chord Mode, Mic FX, Teleprompter & Recorder</h2>
+
+  <div class="main-layout">
+    <div class="container">
+      <video id="webcam" autoplay playsinline></video>
+      <canvas id="output_canvas" width="640" height="480"></canvas>
+    </div>
+
+    <div class="fx-panel">
+      <h3>🎙️ Pengaturan Efek Mic</h3>
+
+      <label for="micTone" style="font-size:13px; display:block; margin-bottom:5px; color:#d1d5db;">
+        Karakter Suara (Filter)
+      </label>
+      <select id="micTone">
+        <option value="bandpass">🎙️ Radio / Megaphone (Bandpass)</option>
+        <option value="lowpass">🎧 Hangat / Bassy (Lowpass)</option>
+        <option value="highpass">📞 Telepon / Crisp (Highpass)</option>
+      </select>
+
+      <div class="slider-group">
+        <div class="slider-header">
+          <span>Volume Mic (Gain)</span>
+          <span id="valGain">1.20x</span>
+        </div>
+        <input id="micGain" type="range" min="0" max="2.5" step="0.05" value="1.2">
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-header">
+          <span>Echo Delay Time</span>
+          <span id="valDelay">0.25s</span>
+        </div>
+        <input id="echoTime" type="range" min="0.05" max="0.9" step="0.01" value="0.25">
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-header">
+          <span>Echo Feedback (Ulangan)</span>
+          <span id="valFeedback">45%</span>
+        </div>
+        <input id="echoFeedback" type="range" min="0" max="0.85" step="0.01" value="0.45">
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-header">
+          <span>Reverb (Ruang Gema)</span>
+          <span id="valReverb">35%</span>
+        </div>
+        <input id="reverbWet" type="range" min="0" max="0.9" step="0.01" value="0.35">
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="btnStart">▶ Mulai Kamera, Mic & Audio</button>
+    <button id="btnPlayMode">🎹 Mode: Single Note</button>
+    <button id="btnMicToggle">🎤 Mic Aktif</button>
+    <button id="btnRecord">🔴 Mulai Rekam</button>
+    <button id="btnStop">⏹️ Stop & Simpan Video</button>
+  </div>
+
+  <div class="status" id="statusText">Klik "Mulai Kamera, Mic & Audio" lalu izinkan akses kamera serta mikrofon.</div>
+
+  <!-- Bagian Chord & Lirik Teleprompter -->
+  <section class="songbook-section">
+    <div class="songbook-header">
+      <h3>🎼 Contekan Chord & Lirik</h3>
+      <div class="song-toolbar">
+        <select id="songSelect" aria-label="Pilih Lagu"></select>
+        <button type="button" class="btn-secondary" id="btnAutoScroll">⏩ Auto-Scroll: OFF</button>
+        <div class="scroll-control">
+          <span>Kecepatan</span>
+          <input type="range" id="scrollSpeed" min="1" max="5" step="1" value="2">
+        </div>
+        <button type="button" class="btn-accent" id="btnToggleForm">+ Tambah Lagu</button>
+      </div>
+    </div>
+
+    <div class="chord-guide" id="chordGuide"></div>
+    <div class="teleprompter-box" id="teleprompterBox"></div>
+
+    <div class="custom-song-form" id="customSongForm">
+      <div class="form-row">
+        <label for="newSongTitle">Judul Lagu</label>
+        <input type="text" id="newSongTitle" placeholder="Contoh: Lagu Santai Sore (Key: C)">
+      </div>
+      <div class="form-row">
+        <label for="newSongNotes">Panduan Nada / Chord Singkat</label>
+        <input type="text" id="newSongNotes" placeholder="Contoh: C = C4-E4-G4 | G = G4-B4-D5">
+      </div>
+      <div class="form-row">
+        <label for="newSongLyrics">Lirik & Chord (Tulis chord di dalam tanda kurung siku seperti [C], [G], [Am], [F])</label>
+        <textarea id="newSongLyrics" rows="6" placeholder="[C] Di bawah langit senja&#10;[G] Kita duduk bersama&#10;[Am] Memainkan nada sederhana&#10;[F] Yang selalu membawa tawa"></textarea>
+      </div>
+      <button type="button" id="btnSaveSong" style="background:#22c55e; color:#052e16;">Simpan ke Daftar Lagu</button>
+    </div>
+  </section>
+
+  <script>
+    const videoElement = document.getElementById('webcam');
+    const canvasElement = document.getElementById('output_canvas');
+    const canvasCtx = canvasElement.getContext('2d');
+
+    const btnStart = document.getElementById('btnStart');
+    const btnPlayMode = document.getElementById('btnPlayMode');
+    const btnMicToggle = document.getElementById('btnMicToggle');
+    const btnRecord = document.getElementById('btnRecord');
+    const btnStop = document.getElementById('btnStop');
+    const statusText = document.getElementById('statusText');
+
+    // Elemen kontrol FX
+    const micToneSelect = document.getElementById('micTone');
+    const micGainSlider = document.getElementById('micGain');
+    const echoTimeSlider = document.getElementById('echoTime');
+    const echoFeedbackSlider = document.getElementById('echoFeedback');
+    const reverbWetSlider = document.getElementById('reverbWet');
+
+    const valGain = document.getElementById('valGain');
+    const valDelay = document.getElementById('valDelay');
+    const valFeedback = document.getElementById('valFeedback');
+    const valReverb = document.getElementById('valReverb');
+
+    // Elemen Songbook
+    const songSelect = document.getElementById('songSelect');
+    const chordGuide = document.getElementById('chordGuide');
+    const teleprompterBox = document.getElementById('teleprompterBox');
+    const btnAutoScroll = document.getElementById('btnAutoScroll');
+    const scrollSpeedSlider = document.getElementById('scrollSpeed');
+    const btnToggleForm = document.getElementById('btnToggleForm');
+    const customSongForm = document.getElementById('customSongForm');
+    const btnSaveSong = document.getElementById('btnSaveSong');
+
+    let synth;
+    let mic;
+    let micGainNode;
+    let micFilter;
+    let echoDelay;
+    let reverbNode;
+    let micMuted = false;
+    let chordMode = false;
+
+    let mediaRecorder;
+    let recordedChunks = [];
+    let recorderDestination;
+    let activeKey = null;
+    let activeNotesPlayed = [];
+    let touchPulse = 0;
+
+    const notes = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"];
+    const keyWidth = canvasElement.width / notes.length;
+    const touchLineY = 330;
+
+    // Mapping Chord saat Chord Mode aktif (1 sentuhan tuts dasar = akor penuh)
+    const chordMap = {
+      "C4": { label: "C", notes: ["C4", "E4", "G4"] },
+      "D4": { label: "Dm", notes: ["D4", "F4", "A4"] },
+      "E4": { label: "Em", notes: ["E4", "G4", "B4"] },
+      "F4": { label: "F", notes: ["F4", "A4", "C5"] },
+      "G4": { label: "G", notes: ["G4", "B4", "D5"] },
+      "A4": { label: "Am", notes: ["A4", "C5", "E5"] },
+      "B4": { label: "Bdim", notes: ["B4", "D5", "F5"] },
+      "C5": { label: "C5", notes: ["C5", "E5", "G5"] }
+    };
+
+    const defaultSongs = [
+      {
+        title: "Twinkle Twinkle Little Star (C Major)",
+        chords: ["C", "F", "G"],
+        noteHints: "Chord Mode: C (tuts C4), F (tuts F4), G (tuts G4) | Melodi: C4-C4-G4-G4-A4-A4-G4",
+        lyrics:
+`[C] Twinkle, twinkle, [F] little [C] star
+[F] How I won-[C]der [G] what you [C] are
+[C] Up a-[G]bove the [C] world so [G] high
+[C] Like a [G] dia-[C]mond [G] in the sky
+[C] Twinkle, twinkle, [F] little [C] star
+[F] How I won-[C]der [G] what you [C] are`
+      },
+      {
+        title: "Ibu Kita Kartini (C Major)",
+        chords: ["C", "G", "F", "Am"],
+        noteHints: "Chord Mode: C (tuts C4), G (tuts G4), F (tuts F4), Am (tuts A4)",
+        lyrics:
+`[C] Ibu kita Kartini
+[G] Putri sejati
+[F] Putri [G] Indo-[C]nesia
+[C] Harum namanya
+
+[C] Ibu kita Kartini
+[G] Pendekar bangsa
+[F] Pendekar [G] kaum-[C]nya
+[Am] Untuk [G] merde-[C]ka`
+      },
+      {
+        title: "Ode to Joy - Beethoven (C Major)",
+        chords: ["C", "G", "F"],
+        noteHints: "Chord Mode: C (tuts C4), G (tuts G4), F (tuts F4) | Melodi: E4-E4-F4-G4-G4-F4-E4-D4",
+        lyrics:
+`[C] Joyful, joyful, [G] we adore Thee
+[C] God of [G] glory, [C] Lord of love
+[C] Hearts unfold like [G] flowers before Thee
+[C] Opening [G] to the [C] sun above`
+      },
+      {
+        title: "Are You Sleeping / Gelang Sipaku Gelang (C Major)",
+        chords: ["C", "G", "F"],
+        noteHints: "Chord Mode: C (tuts C4), G (tuts G4), F (tuts F4) | Melodi: C4-D4-E4-C4",
+        lyrics:
+`[C] Are you sleeping, [C] are you sleeping
+[F] Brother John, [C] brother John
+[G] Morning bells are ringing, [G] morning bells are ringing
+[C] Ding, dang, [G] dong, [C] ding, dang, dong`
+      }
+    ];
+
+    function loadSongs() {
+      const saved = JSON.parse(localStorage.getItem("customVirtualPianoSongs") || "[]");
+      return [...defaultSongs, ...saved];
+    }
+
+    let songs = loadSongs();
+
+    function renderSongDropdown(selectedIndex = 0) {
+      songSelect.innerHTML = "";
+      songs.forEach((song, idx) => {
+        const opt = document.createElement("option");
+        opt.value = idx;
+        opt.textContent = song.title;
+        songSelect.appendChild(opt);
+      });
+      songSelect.value = selectedIndex;
+      renderSelectedSong();
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function renderSelectedSong() {
+      const idx = parseInt(songSelect.value, 10) || 0;
+      const song = songs[idx] || songs[0];
+
+      const pillsHtml = (song.chords || [])
+        .map(c => `<span class="chord-pill">${escapeHtml(c)}</span>`)
+        .join("");
+
+      chordGuide.innerHTML = `
+        <div><strong>Chord dipakai:</strong> ${pillsHtml || "-"}</div>
+        <div style="margin-top:5px;"><strong>Panduan Tuts:</strong> ${escapeHtml(song.noteHints || "")}</div>
+      `;
+
+      const formattedLyrics = escapeHtml(song.lyrics || "").replace(
+        /\[([^\]]+)\]/g,
+        '<span class="chord-tag">[$1]</span>'
+      );
+      teleprompterBox.innerHTML = formattedLyrics;
+      teleprompterBox.scrollTop = 0;
+    }
+
+    songSelect.addEventListener("change", renderSelectedSong);
+
+    let scrollTimer = null;
+    let autoScrollEnabled = false;
+
+    btnAutoScroll.addEventListener("click", () => {
+      autoScrollEnabled = !autoScrollEnabled;
+      if (autoScrollEnabled) {
+        btnAutoScroll.textContent = "⏸ Auto-Scroll: ON";
+        btnAutoScroll.style.background = "#16a34a";
+        btnAutoScroll.style.color = "#fff";
+        scrollTimer = setInterval(() => {
+          const speed = parseInt(scrollSpeedSlider.value, 10) || 2;
+          teleprompterBox.scrollTop += speed * 0.6;
+          if (teleprompterBox.scrollTop + teleprompterBox.clientHeight >= teleprompterBox.scrollHeight - 2) {
+            teleprompterBox.scrollTop = 0;
+          }
+        }, 60);
+      } else {
+        btnAutoScroll.textContent = "⏩ Auto-Scroll: OFF";
+        btnAutoScroll.style.background = "";
+        btnAutoScroll.style.color = "";
+        clearInterval(scrollTimer);
+      }
+    });
+
+    btnToggleForm.addEventListener("click", () => {
+      customSongForm.classList.toggle("active");
+    });
+
+    btnSaveSong.addEventListener("click", () => {
+      const title = document.getElementById("newSongTitle").value.trim();
+      const noteHints = document.getElementById("newSongNotes").value.trim();
+      const lyrics = document.getElementById("newSongLyrics").value.trim();
+
+      if (!title || !lyrics) {
+        alert("Isi minimal Judul Lagu dan Lirik/Chord terlebih dahulu.");
+        return;
+      }
+
+      const chordMatches = [...lyrics.matchAll(/\[([^\]]+)\]/g)].map(m => m[1].trim());
+      const uniqueChords = [...new Set(chordMatches)];
+
+      const newSong = {
+        title,
+        chords: uniqueChords,
+        noteHints: noteHints || "Sesuaikan nada dengan tuts C4 - C5",
+        lyrics
+      };
+
+      const saved = JSON.parse(localStorage.getItem("customVirtualPianoSongs") || "[]");
+      saved.push(newSong);
+      localStorage.setItem("customVirtualPianoSongs", JSON.stringify(saved));
+
+      songs = loadSongs();
+      renderSongDropdown(songs.length - 1);
+
+      document.getElementById("newSongTitle").value = "";
+      document.getElementById("newSongNotes").value = "";
+      document.getElementById("newSongLyrics").value = "";
+      customSongForm.classList.remove("active");
+    });
+
+    renderSongDropdown(0);
+
+    // Toggle Single Note / Chord Mode
+    btnPlayMode.addEventListener("click", () => {
+      releaseActiveNotes();
+      activeKey = null;
+      chordMode = !chordMode;
+
+      if (chordMode) {
+        btnPlayMode.textContent = "🎼 Mode: Chord (1 Sentuh = Akor)";
+        btnPlayMode.classList.add("chord-active");
+      } else {
+        btnPlayMode.textContent = "🎹 Mode: Single Note";
+        btnPlayMode.classList.remove("chord-active");
+      }
+    });
+
+    function triggerNotesForKey(baseNote) {
+      if (!synth) return;
+      releaseActiveNotes();
+
+      if (chordMode && chordMap[baseNote]) {
+        const chordNotes = chordMap[baseNote].notes;
+        synth.triggerAttack(chordNotes);
+        activeNotesPlayed = [...chordNotes];
+      } else {
+        synth.triggerAttack(baseNote);
+        activeNotesPlayed = [baseNote];
+      }
+      touchPulse = 1.0;
+    }
+
+    function releaseActiveNotes() {
+      if (!synth || activeNotesPlayed.length === 0) return;
+      synth.triggerRelease(activeNotesPlayed);
+      activeNotesPlayed = [];
+    }
+
+    // 1. Inisialisasi Audio Synth + Mic FX + Recorder Stream
+    btnStart.addEventListener('click', async () => {
+      await Tone.start();
+
+      recorderDestination = Tone.context.createMediaStreamDestination();
+
+      synth = new Tone.PolySynth(Tone.Synth).toDestination();
+      synth.connect(recorderDestination);
+
+      mic = new Tone.UserMedia();
+      micGainNode = new Tone.Gain(parseFloat(micGainSlider.value));
+      micFilter = new Tone.Filter(1200, "bandpass");
+      echoDelay = new Tone.FeedbackDelay({
+        delayTime: parseFloat(echoTimeSlider.value),
+        feedback: parseFloat(echoFeedbackSlider.value),
+        wet: 0.65
+      });
+      reverbNode = new Tone.Reverb({
+        decay: 2.6,
+        wet: parseFloat(reverbWetSlider.value)
+      });
+      await reverbNode.ready;
+
+      mic.connect(micGainNode);
+      micGainNode.connect(micFilter);
+      micFilter.connect(echoDelay);
+      echoDelay.connect(reverbNode);
+      reverbNode.toDestination();
+      reverbNode.connect(recorderDestination);
+
+      try {
+        await mic.open();
+        statusText.textContent = "Kamera & Mic aktif! Sentuh area tuts di bawah garis sentuh untuk membunyikan nada.";
+      } catch (err) {
+        statusText.textContent = "Mic tidak diizinkan/tersedia — piano tetap bisa dimainkan.";
+      }
+
+      btnStart.style.display = 'none';
+      btnPlayMode.style.display = 'inline-block';
+      btnMicToggle.style.display = 'inline-block';
+      btnRecord.style.display = 'inline-block';
+
+      initHandTracking();
+    });
+
+    micGainSlider.addEventListener('input', () => {
+      const v = parseFloat(micGainSlider.value);
+      valGain.textContent = `${v.toFixed(2)}x`;
+      if (micGainNode && !micMuted) micGainNode.gain.rampTo(v, 0.03);
+    });
+
+    micToneSelect.addEventListener('change', () => {
+      if (!micFilter) return;
+      const mode = micToneSelect.value;
+      micFilter.type = mode;
+      if (mode === "bandpass") {
+        micFilter.frequency.rampTo(1200, 0.05);
+        micFilter.Q.rampTo(2.5, 0.05);
+      } else if (mode === "lowpass") {
+        micFilter.frequency.rampTo(650, 0.05);
+        micFilter.Q.rampTo(1.2, 0.05);
+      } else if (mode === "highpass") {
+        micFilter.frequency.rampTo(1600, 0.05);
+        micFilter.Q.rampTo(1.5, 0.05);
+      }
+    });
+
+    echoTimeSlider.addEventListener('input', () => {
+      const v = parseFloat(echoTimeSlider.value);
+      valDelay.textContent = `${v.toFixed(2)}s`;
+      if (echoDelay) echoDelay.delayTime.rampTo(v, 0.03);
+    });
+
+    echoFeedbackSlider.addEventListener('input', () => {
+      const v = parseFloat(echoFeedbackSlider.value);
+      valFeedback.textContent = `${Math.round(v * 100)}%`;
+      if (echoDelay) echoDelay.feedback.rampTo(v, 0.03);
+    });
+
+    reverbWetSlider.addEventListener('input', () => {
+      const v = parseFloat(reverbWetSlider.value);
+      valReverb.textContent = `${Math.round(v * 100)}%`;
+      if (reverbNode) reverbNode.wet.rampTo(v, 0.03);
+    });
+
+    btnMicToggle.addEventListener('click', () => {
+      if (!micGainNode) return;
+      micMuted = !micMuted;
+      if (micMuted) {
+        micGainNode.gain.rampTo(0, 0.03);
+        btnMicToggle.textContent = "🔇 Mic Mute";
+        btnMicToggle.classList.add("muted");
+      } else {
+        const currentGain = parseFloat(micGainSlider.value);
+        micGainNode.gain.rampTo(currentGain, 0.03);
+        btnMicToggle.textContent = "🎤 Mic Aktif";
+        btnMicToggle.classList.remove("muted");
+      }
+    });
+
+    // 2. MediaPipe Hands
+    function initHandTracking() {
+      const hands = new Hands({
+        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+      });
+
+      hands.setOptions({
+        maxNumHands: 1,
+        modelComplexity: 1,
+        minDetectionConfidence: 0.7,
+        minTrackingConfidence: 0.7
+      });
+
+      hands.onResults(onResults);
+
+      const camera = new Camera(videoElement, {
+        onFrame: async () => {
+          await hands.send({ image: videoElement });
+        },
+        width: 640,
+        height: 480
+      });
+      camera.start();
+    }
+
+    // 3. Render Webcam Mirror + Garis Sentuh + Tuts + Deteksi Jari ke Canvas
+    function onResults(results) {
+      canvasCtx.save();
+      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+      canvasCtx.translate(canvasElement.width, 0);
+      canvasCtx.scale(-1, 1);
+      canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+      canvasCtx.restore();
+
+      drawPianoKeys();
+
+      if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+        const landmarks = results.multiHandLandmarks[0];
+        const indexFinger = landmarks[8];
+        const x = (1 - indexFinger.x) * canvasElement.width;
+        const y = indexFinger.y * canvasElement.height;
+
+        const isTouchingKey = y > touchLineY;
+
+        // Efek ring sentuh saat memicu nada/chord
+        if (touchPulse > 0.02) {
+          canvasCtx.save();
+          canvasCtx.strokeStyle = `rgba(34, 197, 94, ${touchPulse})`;
+          canvasCtx.lineWidth = 4;
+          canvasCtx.beginPath();
+          canvasCtx.arc(x, y, 14 + (1 - touchPulse) * 24, 0, 2 * Math.PI);
+          canvasCtx.stroke();
+          canvasCtx.restore();
+          touchPulse *= 0.84;
+        }
+
+        // Penanda ujung jari telunjuk
+        canvasCtx.fillStyle = isTouchingKey ? '#22c55e' : '#ef4444';
+        canvasCtx.beginPath();
+        canvasCtx.arc(x, y, 12, 0, 2 * Math.PI);
+        canvasCtx.fill();
+        canvasCtx.lineWidth = 3;
+        canvasCtx.strokeStyle = '#ffffff';
+        canvasCtx.stroke();
+
+        if (isTouchingKey) {
+          const keyIndex = Math.min(
+            notes.length - 1,
+            Math.max(0, Math.floor(x / keyWidth))
+          );
+          const currentNote = notes[keyIndex];
+
+          if (activeKey !== currentNote) {
+            triggerNotesForKey(currentNote);
+            activeKey = currentNote;
+          }
+        } else if (activeKey) {
+          releaseActiveNotes();
+          activeKey = null;
+        }
+      } else if (activeKey) {
+        releaseActiveNotes();
+        activeKey = null;
+      }
+    }
+
+    function drawPianoKeys() {
+      const keyHeight = canvasElement.height - touchLineY;
+
+      notes.forEach((note, index) => {
+        const x = index * keyWidth;
+        canvasCtx.strokeStyle = '#111827';
+        canvasCtx.lineWidth = 2;
+
+        const isActive = activeKey === note;
+        canvasCtx.fillStyle = isActive
+          ? (chordMode ? 'rgba(168, 85, 247, 0.85)' : 'rgba(34, 197, 94, 0.85)')
+          : 'rgba(255, 255, 255, 0.72)';
+
+        canvasCtx.fillRect(x, touchLineY, keyWidth, keyHeight);
+        canvasCtx.strokeRect(x, touchLineY, keyWidth, keyHeight);
+
+        canvasCtx.fillStyle = isActive ? '#ffffff' : '#111827';
+        canvasCtx.font = 'bold 17px system-ui, sans-serif';
+        canvasCtx.textAlign = 'center';
+
+        const displayLabel = chordMode && chordMap[note]
+          ? `${chordMap[note].label} (${note})`
+          : note;
+
+        canvasCtx.fillText(displayLabel, x + keyWidth / 2, touchLineY + keyHeight - 24);
+      });
+
+      // Garis batas sentuh di atas tuts
+      canvasCtx.save();
+      canvasCtx.strokeStyle = chordMode ? '#c084fc' : '#38bdf8';
+      canvasCtx.lineWidth = 3;
+      canvasCtx.setLineDash([8, 6]);
+      canvasCtx.beginPath();
+      canvasCtx.moveTo(0, touchLineY);
+      canvasCtx.lineTo(canvasElement.width, touchLineY);
+      canvasCtx.stroke();
+
+      canvasCtx.setLineDash([]);
+      canvasCtx.fillStyle = 'rgba(15, 23, 42, 0.82)';
+      canvasCtx.fillRect(8, touchLineY - 24, 230, 20);
+      canvasCtx.fillStyle = chordMode ? '#e9d5ff' : '#bae6fd';
+      canvasCtx.font = 'bold 12px system-ui, sans-serif';
+      canvasCtx.textAlign = 'left';
+      canvasCtx.fillText(
+        chordMode ? "SENTUH TUTS = AKOR PENUH" : "SENTUH TUTS = 1 NADA",
+        14,
+        touchLineY - 10
+      );
+      canvasCtx.restore();
+    }
+
+    // 4. Rekaman Video + Audio (Synth + Mic FX)
+    btnRecord.addEventListener('click', () => {
+      recordedChunks = [];
+
+      const canvasStream = canvasElement.captureStream(30);
+      const audioStream = recorderDestination.stream;
+
+      const combinedStream = new MediaStream([
+        ...canvasStream.getVideoTracks(),
+        ...audioStream.getAudioTracks()
+      ]);
+
+      const options = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')
+        ? { mimeType: 'video/webm;codecs=vp9,opus' }
+        : { mimeType: 'video/webm' };
+
+      mediaRecorder = new MediaRecorder(combinedStream, options);
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) {
+          recordedChunks.push(e.data);
+        }
+      };
+
+      mediaRecorder.onstop = saveVideo;
+      mediaRecorder.start();
+
+      btnRecord.style.display = 'none';
+      btnStop.style.display = 'inline-block';
+      statusText.innerHTML = '<span class="rec-badge">● SEDANG MEREKAM</span> — Video + Piano + Mic FX sedang direkam...';
+    });
+
+    btnStop.addEventListener('click', () => {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+      btnStop.style.display = 'none';
+      btnRecord.style.display = 'inline-block';
+      statusText.textContent = "Rekaman selesai dan sedang diunduh...";
+    });
+
+    function saveVideo() {
+      const blob = new Blob(recordedChunks, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `piano-mic-fx-${Date.now()}.webm`;
+      a.click();
+      URL.revokeObjectURL(url);
+      statusText.textContent = "File video (.webm) berhasil disimpan!";
+    }
+  </script>
+</body>
+</html>

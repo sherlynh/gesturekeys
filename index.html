@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GestureKeys — Full Chromatic & Chord Piano Studio</title>
+  <title>GestureKeys — Super Duper Complete Chromatic Piano & Studio</title>
   <style>
     :root {
       --bg-primary: #0b0e17;
@@ -24,9 +24,7 @@
       --radius-sm: 6px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -42,7 +40,7 @@
       min-height: 100vh;
     }
 
-    /* Header & Custom GestureKeys Logo */
+    /* Header & Branding GestureKeys */
     .app-header {
       max-width: 1120px;
       margin: 0 auto 20px;
@@ -155,17 +153,9 @@
       box-shadow: var(--shadow-card);
     }
 
-    video {
-      display: none;
-    }
+    video { display: none; }
+    canvas { width: 100%; height: 100%; display: block; }
 
-    canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    /* Keyboard Range & Chord Customizer Bar */
     .piano-customizer {
       margin-top: 10px;
       background: var(--bg-surface);
@@ -212,13 +202,14 @@
 
     .range-buttons {
       display: flex;
-      gap: 6px;
+      gap: 4px;
       align-items: center;
+      flex-wrap: wrap;
     }
 
     .btn-mini {
-      padding: 5px 10px;
-      font-size: 12px;
+      padding: 4px 8px;
+      font-size: 11.5px;
       border-radius: 6px;
       background: #243049;
       color: #e2e8f0;
@@ -257,9 +248,7 @@
       border: 1px solid rgba(99, 102, 241, 0.3);
     }
 
-    .slider-group {
-      margin-bottom: 13px;
-    }
+    .slider-group { margin-bottom: 13px; }
 
     .slider-header {
       display: flex;
@@ -299,11 +288,8 @@
       box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
     }
 
-    select {
-      margin-bottom: 14px;
-    }
+    select { margin-bottom: 14px; }
 
-    /* Controls */
     .controls {
       margin-top: 18px;
       display: flex;
@@ -322,14 +308,8 @@
       transition: transform 0.12s ease, opacity 0.15s ease, box-shadow 0.15s ease;
     }
 
-    button:hover {
-      opacity: 0.94;
-      transform: translateY(-1px);
-    }
-
-    button:active {
-      transform: translateY(0);
-    }
+    button:hover { opacity: 0.94; transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
 
     #btnStart {
       background: linear-gradient(135deg, #22c55e, #16a34a);
@@ -390,12 +370,8 @@
       min-height: 20px;
     }
 
-    .rec-badge {
-      color: #f87171;
-      font-weight: 700;
-    }
+    .rec-badge { color: #f87171; font-weight: 700; }
 
-    /* Songbook & Teleprompter Section */
     .songbook-section {
       max-width: 1040px;
       margin: 24px auto 0 auto;
@@ -417,11 +393,7 @@
       margin-bottom: 14px;
     }
 
-    .songbook-header h3 {
-      margin: 0;
-      font-size: 17px;
-      color: #c4b5fd;
-    }
+    .songbook-header h3 { margin: 0; font-size: 17px; color: #c4b5fd; }
 
     .song-toolbar {
       display: flex;
@@ -430,11 +402,7 @@
       gap: 10px;
     }
 
-    .song-toolbar select {
-      width: auto;
-      min-width: 245px;
-      margin-bottom: 0;
-    }
+    .song-toolbar select { width: auto; min-width: 245px; margin-bottom: 0; }
 
     .chord-guide {
       background: rgba(11, 15, 25, 0.78);
@@ -446,17 +414,24 @@
       color: #cbd5e1;
     }
 
-    .chord-pill {
-      display: inline-block;
-      background: rgba(99, 102, 241, 0.16);
-      color: #93c5fd;
-      border: 1px solid rgba(129, 140, 248, 0.35);
-      border-radius: 6px;
-      padding: 2px 9px;
-      margin: 2px 4px 2px 0;
-      font-weight: 700;
-      font-size: 12px;
+    .chord-breakdown-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
     }
+
+    .chord-detail-card {
+      background: rgba(30, 41, 59, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .chord-detail-card strong { color: var(--accent-amber); }
+    .chord-detail-card span { color: #cbd5e1; display: block; }
 
     .teleprompter-box {
       background: #080b12;
@@ -472,10 +447,7 @@
       color: #f8fafc;
     }
 
-    .chord-tag {
-      color: var(--accent-amber);
-      font-weight: 700;
-    }
+    .chord-tag { color: var(--accent-amber); font-weight: 700; }
 
     .custom-song-form {
       margin-top: 16px;
@@ -484,20 +456,9 @@
       display: none;
     }
 
-    .custom-song-form.active {
-      display: block;
-    }
-
-    .form-row {
-      margin-bottom: 10px;
-    }
-
-    .form-row label {
-      display: block;
-      font-size: 12.5px;
-      color: #cbd5e1;
-      margin-bottom: 4px;
-    }
+    .custom-song-form.active { display: block; }
+    .form-row { margin-bottom: 10px; }
+    .form-row label { display: block; font-size: 12.5px; color: #cbd5e1; margin-bottom: 4px; }
 
     .scroll-control {
       display: inline-flex;
@@ -511,32 +472,21 @@
       border: 1px solid var(--border-subtle);
     }
 
-    .scroll-control input[type="range"] {
-      width: 84px;
-    }
+    .scroll-control input[type="range"] { width: 84px; }
 
     @media (max-width: 680px) {
-      .app-header {
-        padding: 12px 14px;
-      }
-      .customizer-grid {
-        grid-template-columns: 1fr;
-      }
-      .song-toolbar select {
-        width: 100%;
-        min-width: 0;
-      }
+      .app-header { padding: 12px 14px; }
+      .customizer-grid { grid-template-columns: 1fr; }
+      .song-toolbar select { width: 100%; min-width: 0; }
     }
   </style>
 
-  <!-- MediaPipe & Tone.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 </head>
 <body>
 
-  <!-- Header & Custom GestureKeys Branding -->
   <header class="app-header">
     <div class="brand-logo">
       <div class="brand-icon-wrap" aria-hidden="true">
@@ -551,15 +501,15 @@
       <div>
         <div class="brand-title-row">
           <h1 class="brand-name">GestureKeys</h1>
-          <span class="brand-badge">Full Chromatic</span>
+          <span class="brand-badge">Super Complete</span>
         </div>
-        <p class="brand-subtitle">Tuts Kromatik A–G + Kres (#), Multi-Chord Builder, Mic FX &amp; Teleprompter</p>
+        <p class="brand-subtitle">3 Oktaf Chromatic (F2–C6), Flat/Sharp (Bb/Eb/Ab), Multi-Chord, Mic FX &amp; Teleprompter</p>
       </div>
     </div>
 
     <div class="header-pills">
-      <span class="info-chip">🎹 Nada A–G &amp; Kres (#)</span>
-      <span class="info-chip">🎼 Major / m / 7 / sus4 / dim</span>
+      <span class="info-chip">🎹 F2–C6 (44 Nada Kromatik)</span>
+      <span class="info-chip">♭/♯ Mol &amp; Kres Disatukan</span>
       <span class="info-chip">🎙️ Live Mic FX &amp; .webm</span>
     </div>
   </header>
@@ -571,13 +521,12 @@
         <canvas id="output_canvas" width="640" height="480"></canvas>
       </div>
 
-      <!-- Kontrol Rentang Tuts Kromatik & Tipe Chord -->
       <div class="piano-customizer">
         <div class="customizer-grid">
           <div class="customizer-field">
             <label for="keyLayoutMode">Susunan Tuts</label>
             <select id="keyLayoutMode">
-              <option value="chromatic">Chromatic (Putih + Kres #)</option>
+              <option value="chromatic">Chromatic (Putih + Kres # / Mol b)</option>
               <option value="natural">Natural Saja (A–G)</option>
             </select>
           </div>
@@ -585,7 +534,7 @@
           <div class="customizer-field">
             <label for="chordQuality">Kualitas Chord Mode</label>
             <select id="chordQuality">
-              <option value="major">Major (Triad: 1-3-5)</option>
+              <option value="major">Major (1-3-5)</option>
               <option value="minor">Minor / m (1-b3-5)</option>
               <option value="maj7">Major 7 (1-3-5-7)</option>
               <option value="min7">Minor 7 / m7 (1-b3-5-b7)</option>
@@ -600,18 +549,20 @@
           <div class="customizer-field">
             <label for="visibleKeyCount">Jumlah Tuts Terlihat</label>
             <select id="visibleKeyCount">
-              <option value="8">8 Tuts (1 Oktaf+)</option>
-              <option value="12" selected>12 Tuts (1 Oktaf Penuh)</option>
-              <option value="15">15 Tuts (Luas)</option>
+              <option value="8">8 Tuts</option>
+              <option value="12" selected>12 Tuts (1 Oktaf)</option>
+              <option value="16">16 Tuts (Luas)</option>
             </select>
           </div>
         </div>
 
         <div class="range-nav-row">
-          <span id="rangeInfoText">Rentang aktif: <strong>A3 – G#4</strong> (Geser oktaf/tuts ke kiri atau kanan)</span>
+          <span id="rangeInfoText">Rentang aktif: <strong>C4 – B4</strong></span>
           <div class="range-buttons">
-            <button type="button" class="btn-mini" id="btnShiftLeft">◀ Geser Kiri (Turun)</button>
-            <button type="button" class="btn-mini" id="btnShiftRight">Geser Kanan (Naik) ▶</button>
+            <button type="button" class="btn-mini" id="btnOctaveDown">◀ Octave</button>
+            <button type="button" class="btn-mini" id="btnStepLeft">◀ Step</button>
+            <button type="button" class="btn-mini" id="btnStepRight">Step ▶</button>
+            <button type="button" class="btn-mini" id="btnOctaveUp">Octave ▶</button>
           </div>
         </div>
       </div>
@@ -676,7 +627,6 @@
 
   <div class="status" id="statusText">Klik "Mulai Kamera, Mic &amp; Audio" lalu izinkan akses kamera serta mikrofon.</div>
 
-  <!-- Bagian Chord & Lirik Teleprompter -->
   <section class="songbook-section">
     <div class="songbook-header">
       <h3>🎼 Contekan Chord &amp; Lirik</h3>
@@ -700,12 +650,12 @@
         <input type="text" id="newSongTitle" placeholder="Contoh: Lagu Santai Sore (Key: C)">
       </div>
       <div class="form-row">
-        <label for="newSongNotes">Panduan Nada / Chord Singkat</label>
-        <input type="text" id="newSongNotes" placeholder="Contoh: C = C4-E4-G4 | Am = A4-C5-E5 | F#m = F#4-A4-C#5">
+        <label for="newSongNotes">Catatan Tambahan (Opsional — note tiap chord otomatis dihitung)</label>
+        <input type="text" id="newSongNotes" placeholder="Contoh: Fokus pada perpindahan Bb (A#) ke Am">
       </div>
       <div class="form-row">
-        <label for="newSongLyrics">Lirik &amp; Chord (Tulis chord di dalam tanda kurung siku seperti [C], [Am], [F#m], [G#])</label>
-        <textarea id="newSongLyrics" rows="6" placeholder="[C] Di bawah langit senja&#10;[G] Kita duduk bersama&#10;[Am] Memainkan nada sederhana&#10;[F] Yang selalu membawa tawa"></textarea>
+        <label for="newSongLyrics">Lirik &amp; Chord (Tulis chord di dalam tanda kurung siku seperti [C], [Bb], [Fm], [F#m])</label>
+        <textarea id="newSongLyrics" rows="6" placeholder="[C] Di bawah langit senja&#10;[Bb] Kita duduk bersama&#10;[Fm] Memainkan nada sederhana&#10;[C] Yang selalu membawa tawa"></textarea>
       </div>
       <button type="button" id="btnSaveSong" style="background:#22c55e; color:#052e16;">Simpan ke Daftar Lagu</button>
     </div>
@@ -723,15 +673,15 @@
     const btnStop = document.getElementById('btnStop');
     const statusText = document.getElementById('statusText');
 
-    // Kontrol rentang nada & akor
     const keyLayoutModeSelect = document.getElementById('keyLayoutMode');
     const chordQualitySelect = document.getElementById('chordQuality');
     const visibleKeyCountSelect = document.getElementById('visibleKeyCount');
-    const btnShiftLeft = document.getElementById('btnShiftLeft');
-    const btnShiftRight = document.getElementById('btnShiftRight');
+    const btnOctaveDown = document.getElementById('btnOctaveDown');
+    const btnStepLeft = document.getElementById('btnStepLeft');
+    const btnStepRight = document.getElementById('btnStepRight');
+    const btnOctaveUp = document.getElementById('btnOctaveUp');
     const rangeInfoText = document.getElementById('rangeInfoText');
 
-    // Elemen kontrol FX
     const micToneSelect = document.getElementById('micTone');
     const micGainSlider = document.getElementById('micGain');
     const echoTimeSlider = document.getElementById('echoTime');
@@ -743,7 +693,6 @@
     const valFeedback = document.getElementById('valFeedback');
     const valReverb = document.getElementById('valReverb');
 
-    // Elemen Songbook
     const songSelect = document.getElementById('songSelect');
     const chordGuide = document.getElementById('chordGuide');
     const teleprompterBox = document.getElementById('teleprompterBox');
@@ -769,37 +718,23 @@
     let activeNotesPlayed = [];
     let touchPulse = 0;
 
-    // State deteksi tangan & throttling
     let latestFingerPoint = null;
     let isDetectingHand = false;
     let lastDetectionTime = 0;
     const DETECTION_INTERVAL_MS = 55;
 
-    // Bank nada kromatik penuh dari A3 sampai E5 (semua natural & kres #)
-    const ALL_CHROMATIC_NOTES = [
-      { note: "A3", isSharp: false },
-      { note: "A#3", isSharp: true },
-      { note: "B3", isSharp: false },
-      { note: "C4", isSharp: false },
-      { note: "C#4", isSharp: true },
-      { note: "D4", isSharp: false },
-      { note: "D#4", isSharp: true },
-      { note: "E4", isSharp: false },
-      { note: "F4", isSharp: false },
-      { note: "F#4", isSharp: true },
-      { note: "G4", isSharp: false },
-      { note: "G#4", isSharp: true },
-      { note: "A4", isSharp: false },
-      { note: "A#4", isSharp: true },
-      { note: "B4", isSharp: false },
-      { note: "C5", isSharp: false },
-      { note: "C#5", isSharp: true },
-      { note: "D5", isSharp: false },
-      { note: "D#5", isSharp: true },
-      { note: "E5", isSharp: false }
-    ];
+    // Generasi Bank Nada Penuh dari F2 sampai C6 (3+ Oktaf / 44 Nada Kromatik)
+    const NOTE_NAMES_SHARP = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    const ALL_CHROMATIC_NOTES = [];
 
-    // Formula interval semitone untuk berbagai jenis akor
+    for (let midi = 41; midi <= 84; midi++) { // F2 (41) sampai C6 (84)
+      const pitchClass = ((midi % 12) + 12) % 12;
+      const octave = Math.floor(midi / 12) - 1;
+      const noteName = `${NOTE_NAMES_SHARP[pitchClass]}${octave}`;
+      const isSharp = noteName.includes("#");
+      ALL_CHROMATIC_NOTES.push({ note: noteName, isSharp, midi });
+    }
+
     const CHORD_INTERVALS = {
       major: { suffix: "", intervals: [0, 4, 7] },
       minor: { suffix: "m", intervals: [0, 3, 7] },
@@ -812,12 +747,19 @@
       aug: { suffix: "aug", intervals: [0, 4, 8] }
     };
 
-    const NOTE_NAMES_SHARP = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    const FLAT_TO_SHARP = {
+      "Db": "C#", "Eb": "D#", "Fb": "E", "Gb": "F#", "Ab": "G#", "Bb": "A#", "Cb": "B"
+    };
+
+    function normalizeRootName(rawRoot) {
+      return FLAT_TO_SHARP[rawRoot] || rawRoot;
+    }
 
     function noteToMidi(noteStr) {
-      const match = /^([A-G]#?)(-?\d+)$/.exec(noteStr);
+      const match = /^([A-G](?:#|b)?)(-?\d+)$/.exec(noteStr);
       if (!match) return 60;
-      const pitchClass = NOTE_NAMES_SHARP.indexOf(match[1]);
+      const normRoot = normalizeRootName(match[1]);
+      const pitchClass = NOTE_NAMES_SHARP.indexOf(normRoot);
       const octave = parseInt(match[2], 10);
       return (octave + 1) * 12 + pitchClass;
     }
@@ -838,7 +780,34 @@
       };
     }
 
-    let startIndex = 0; // Mulai dari A3
+    function parseChordSymbol(symbol) {
+      const cleaned = symbol.trim();
+      const match = /^([A-G](?:#|b)?)(.*)$/.exec(cleaned);
+      if (!match) return null;
+
+      const rawRoot = match[1];
+      const normRoot = normalizeRootName(rawRoot);
+      const rest = match[2] || "";
+
+      let qualityKey = "major";
+      if (/maj7/i.test(rest)) qualityKey = "maj7";
+      else if (/m7|min7/i.test(rest)) qualityKey = "min7";
+      else if (/7/.test(rest)) qualityKey = "dom7";
+      else if (/sus2/i.test(rest)) qualityKey = "sus2";
+      else if (/sus4/i.test(rest)) qualityKey = "sus4";
+      else if (/dim/i.test(rest)) qualityKey = "dim";
+      else if (/aug/i.test(rest)) qualityKey = "aug";
+      else if (/^m(?!aj)/i.test(rest)) qualityKey = "minor";
+
+      const rootWithOctave = `${normRoot}4`;
+      const chordObj = buildChordFromRoot(rootWithOctave, qualityKey);
+      const aliasNote = rawRoot !== normRoot ? `${rawRoot} = ${normRoot}` : normRoot;
+
+      return { symbol: cleaned, aliasNote, notes: chordObj.notes };
+    }
+
+    // Default posisi awal di C4 (Index 19 di ALL_CHROMATIC_NOTES)
+    let startIndex = 19;
     let visibleKeys = [];
     let keyWidth = canvasElement.width / 12;
     const touchLineY = 330;
@@ -863,34 +832,35 @@
     }
 
     keyLayoutModeSelect.addEventListener("change", () => {
-      releaseActiveNotes();
-      activeKey = null;
-      rebuildVisibleKeys();
+      releaseActiveNotes(); activeKey = null; rebuildVisibleKeys();
     });
 
     visibleKeyCountSelect.addEventListener("change", () => {
-      releaseActiveNotes();
-      activeKey = null;
-      rebuildVisibleKeys();
+      releaseActiveNotes(); activeKey = null; rebuildVisibleKeys();
     });
 
     chordQualitySelect.addEventListener("change", () => {
-      releaseActiveNotes();
-      activeKey = null;
+      releaseActiveNotes(); activeKey = null;
     });
 
-    btnShiftLeft.addEventListener("click", () => {
-      releaseActiveNotes();
-      activeKey = null;
-      startIndex = Math.max(0, startIndex - 2);
-      rebuildVisibleKeys();
+    btnStepLeft.addEventListener("click", () => {
+      releaseActiveNotes(); activeKey = null;
+      startIndex = Math.max(0, startIndex - 1); rebuildVisibleKeys();
     });
 
-    btnShiftRight.addEventListener("click", () => {
-      releaseActiveNotes();
-      activeKey = null;
-      startIndex += 2;
-      rebuildVisibleKeys();
+    btnStepRight.addEventListener("click", () => {
+      releaseActiveNotes(); activeKey = null;
+      startIndex += 1; rebuildVisibleKeys();
+    });
+
+    btnOctaveDown.addEventListener("click", () => {
+      releaseActiveNotes(); activeKey = null;
+      startIndex = Math.max(0, startIndex - 12); rebuildVisibleKeys();
+    });
+
+    btnOctaveUp.addEventListener("click", () => {
+      releaseActiveNotes(); activeKey = null;
+      startIndex += 12; rebuildVisibleKeys();
     });
 
     rebuildVisibleKeys();
@@ -898,8 +868,8 @@
     const defaultSongs = [
       {
         title: "Mantan Terindah - Raisa (C Major)",
-        chords: ["C", "Dm", "Em", "F", "G", "Am", "Fm", "Bb"],
-        noteHints: "Tersedia semua nada A–G & Kres (#). Chord Mode: pilih Major/Minor/7/sus4 lalu sentuh tuts akarnya (C, Dm, Em, F, G, Am).",
+        chords: ["C", "Em", "Am", "Dm", "G", "F", "Fm", "Bb", "Gm"],
+        noteHints: "Bb = A# (A#4-D5-F5). Fm = F4-G#4-C5. Gunakan tombol Octave/Step bila butuh menjangkau nada lebih rendah/tinggi.",
         lyrics:
 `[Intro]
 [C]  [Fm]  [C]  [Fm]
@@ -999,23 +969,36 @@
     }
 
     function escapeHtml(str) {
-      return str
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
     function renderSelectedSong() {
       const idx = parseInt(songSelect.value, 10) || 0;
       const song = songs[idx] || songs[0];
 
-      const pillsHtml = (song.chords || [])
-        .map(c => `<span class="chord-pill">${escapeHtml(c)}</span>`)
+      const chordList = (song.chords && song.chords.length > 0)
+        ? song.chords
+        : [...new Set([...(song.lyrics || "").matchAll(/\[([^\]]+)\]/g)].map(m => m[1].trim()))];
+
+      const cardsHtml = chordList
+        .map(c => {
+          const parsed = parseChordSymbol(c);
+          if (!parsed) {
+            return `<div class="chord-detail-card"><strong>${escapeHtml(c)}</strong><span>Bagian lagu</span></div>`;
+          }
+          const aliasText = parsed.aliasNote.includes("=") ? ` (${parsed.aliasNote})` : "";
+          return `
+            <div class="chord-detail-card">
+              <strong>${escapeHtml(parsed.symbol)}${escapeHtml(aliasText)}</strong>
+              <span>Note: ${parsed.notes.join(" - ")}</span>
+            </div>
+          `;
+        })
         .join("");
 
       chordGuide.innerHTML = `
-        <div><strong>Chord dipakai:</strong> ${pillsHtml || "-"}</div>
-        <div style="margin-top:6px;"><strong>Panduan Tuts:</strong> ${escapeHtml(song.noteHints || "")}</div>
+        <div><strong>Panduan Tuts &amp; Mol/Kres:</strong> ${escapeHtml(song.noteHints || "")}</div>
+        <div class="chord-breakdown-list">${cardsHtml || "-"}</div>
       `;
 
       const formattedLyrics = escapeHtml(song.lyrics || "").replace(
@@ -1052,9 +1035,7 @@
       }
     });
 
-    btnToggleForm.addEventListener("click", () => {
-      customSongForm.classList.toggle("active");
-    });
+    btnToggleForm.addEventListener("click", () => { customSongForm.classList.toggle("active"); });
 
     btnSaveSong.addEventListener("click", () => {
       const title = document.getElementById("newSongTitle").value.trim();
@@ -1072,7 +1053,7 @@
       const newSong = {
         title,
         chords: uniqueChords,
-        noteHints: noteHints || "Gunakan tuts kromatik A–G & Kres (#)",
+        noteHints: noteHints || "Gunakan tuts kromatik F2–C6. Mol (b) otomatis disamakan dengan kres (#).",
         lyrics
       };
 
@@ -1091,12 +1072,8 @@
 
     renderSongDropdown(0);
 
-    // Toggle Single Note / Chord Mode
     btnPlayMode.addEventListener("click", () => {
-      releaseActiveNotes();
-      activeKey = null;
-      chordMode = !chordMode;
-
+      releaseActiveNotes(); activeKey = null; chordMode = !chordMode;
       if (chordMode) {
         btnPlayMode.textContent = "🎼 Mode: Chord (1 Sentuh = Akor)";
         btnPlayMode.classList.add("chord-active");
@@ -1128,7 +1105,6 @@
       activeNotesPlayed = [];
     }
 
-    // 1. Inisialisasi Audio Synth + Mic FX + Recorder Stream
     btnStart.addEventListener('click', async () => {
       btnStart.disabled = true;
       statusText.textContent = "Menyiapkan audio, kamera & deteksi gestur...";
@@ -1188,14 +1164,11 @@
       const mode = micToneSelect.value;
       micFilter.type = mode;
       if (mode === "bandpass") {
-        micFilter.frequency.rampTo(1200, 0.05);
-        micFilter.Q.rampTo(2.5, 0.05);
+        micFilter.frequency.rampTo(1200, 0.05); micFilter.Q.rampTo(2.5, 0.05);
       } else if (mode === "lowpass") {
-        micFilter.frequency.rampTo(650, 0.05);
-        micFilter.Q.rampTo(1.2, 0.05);
+        micFilter.frequency.rampTo(650, 0.05); micFilter.Q.rampTo(1.2, 0.05);
       } else if (mode === "highpass") {
-        micFilter.frequency.rampTo(1600, 0.05);
-        micFilter.Q.rampTo(1.5, 0.05);
+        micFilter.frequency.rampTo(1600, 0.05); micFilter.Q.rampTo(1.5, 0.05);
       }
     });
 
@@ -1232,7 +1205,6 @@
       }
     });
 
-    // 2. MediaPipe Hands dengan Throttling & Queue Guard
     function initHandTracking() {
       const hands = new Hands({
         locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
@@ -1261,9 +1233,7 @@
       const camera = new Camera(videoElement, {
         onFrame: async () => {
           const now = performance.now();
-          if (isDetectingHand || now - lastDetectionTime < DETECTION_INTERVAL_MS) {
-            return;
-          }
+          if (isDetectingHand || now - lastDetectionTime < DETECTION_INTERVAL_MS) return;
           if (videoElement.readyState < 2) return;
 
           isDetectingHand = true;
@@ -1282,7 +1252,6 @@
       requestAnimationFrame(renderCanvasLoop);
     }
 
-    // 3. Render Loop Mulus
     function renderCanvasLoop() {
       canvasCtx.save();
       canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
@@ -1371,8 +1340,8 @@
 
         canvasCtx.fillStyle = isActive || item.isSharp ? '#f8fafc' : '#0f172a';
         canvasCtx.font = visibleKeys.length > 12
-          ? 'bold 12px system-ui, sans-serif'
-          : 'bold 14px system-ui, sans-serif';
+          ? 'bold 11px system-ui, sans-serif'
+          : 'bold 13px system-ui, sans-serif';
         canvasCtx.textAlign = 'center';
 
         const displayLabel = chordMode
@@ -1382,7 +1351,6 @@
         canvasCtx.fillText(displayLabel, x + keyWidth / 2, touchLineY + keyHeight - 24);
       });
 
-      // Garis batas sentuh di atas tuts
       canvasCtx.save();
       canvasCtx.strokeStyle = chordMode ? '#c084fc' : '#38bdf8';
       canvasCtx.lineWidth = 3;
@@ -1407,10 +1375,8 @@
       canvasCtx.restore();
     }
 
-    // 4. Rekaman Video + Audio (Synth + Mic FX)
     btnRecord.addEventListener('click', () => {
       recordedChunks = [];
-
       const canvasStream = canvasElement.captureStream(30);
       const audioStream = recorderDestination.stream;
 
@@ -1426,9 +1392,7 @@
       mediaRecorder = new MediaRecorder(combinedStream, options);
 
       mediaRecorder.ondataavailable = (e) => {
-        if (e.data && e.data.size > 0) {
-          recordedChunks.push(e.data);
-        }
+        if (e.data && e.data.size > 0) recordedChunks.push(e.data);
       };
 
       mediaRecorder.onstop = saveVideo;
@@ -1440,9 +1404,7 @@
     });
 
     btnStop.addEventListener('click', () => {
-      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-        mediaRecorder.stop();
-      }
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
       btnStop.style.display = 'none';
       btnRecord.style.display = 'inline-block';
       statusText.textContent = "Rekaman selesai dan sedang diunduh...";

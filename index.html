@@ -2,113 +2,331 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Piano Virtual + Chord Mode, Mic FX, Teleprompter & Recorder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GestureKeys — Virtual Piano, Chord Mode, Mic FX & Teleprompter</title>
   <style>
-    * { box-sizing: border-box; }
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      text-align: center;
-      background: #121216;
-      color: #f3f4f6;
-      margin: 0;
-      padding: 20px;
+    :root {
+      --bg-primary: #0b0e17;
+      --bg-surface: rgba(20, 25, 38, 0.85);
+      --bg-elevated: #182032;
+      --border-subtle: rgba(148, 163, 184, 0.16);
+      --border-strong: rgba(99, 102, 241, 0.4);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent-cyan: #38bdf8;
+      --accent-indigo: #6366f1;
+      --accent-purple: #a855f7;
+      --accent-green: #22c55e;
+      --accent-red: #ef4444;
+      --accent-amber: #fbbf24;
+      --shadow-card: 0 12px 32px -8px rgba(0, 0, 0, 0.55);
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --radius-sm: 6px;
     }
-    h2 { margin-top: 0; margin-bottom: 14px; }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      text-align: center;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(99, 102, 241, 0.16), transparent 40%),
+        radial-gradient(circle at 85% 15%, rgba(56, 189, 248, 0.14), transparent 42%),
+        radial-gradient(circle at 50% 90%, rgba(168, 85, 247, 0.12), transparent 45%),
+        var(--bg-primary);
+      color: var(--text-primary);
+      margin: 0;
+      padding: 20px 16px 40px;
+      min-height: 100vh;
+    }
+
+    /* Header & Custom GestureKeys Logo */
+    .app-header {
+      max-width: 1120px;
+      margin: 0 auto 22px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 20px;
+      background: var(--bg-surface);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .brand-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(168, 85, 247, 0.25));
+      border: 1px solid rgba(129, 140, 248, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.25);
+    }
+
+    .brand-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-name {
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, #f8fafc 0%, #93c5fd 55%, #d8b4fe 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+    }
+
+    .brand-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.14);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+    }
+
+    .brand-subtitle {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      margin: 2px 0 0;
+    }
+
+    .header-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .info-chip {
+      font-size: 12px;
+      color: #cbd5e1;
+      background: rgba(30, 41, 59, 0.75);
+      border: 1px solid var(--border-subtle);
+      padding: 6px 11px;
+      border-radius: 999px;
+    }
+
+    /* Main Layout */
     .main-layout {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
+      align-items: flex-start;
       gap: 20px;
       max-width: 1120px;
       margin: 0 auto;
     }
+
     .container {
       position: relative;
       width: 640px;
-      height: 480px;
-      border-radius: 10px;
+      max-width: 100%;
+      aspect-ratio: 4 / 3;
+      border-radius: var(--radius-lg);
       overflow: hidden;
-      background: #000;
-      border: 1px solid #2a2a35;
+      background: #05070d;
+      border: 1px solid var(--border-strong);
+      box-shadow: var(--shadow-card);
     }
+
     video {
       display: none;
     }
+
     canvas {
-      width: 640px;
-      height: 480px;
+      width: 100%;
+      height: 100%;
       display: block;
     }
+
     .fx-panel {
-      width: 360px;
-      background: #1c1c24;
-      border: 1px solid #2e2e3a;
-      border-radius: 10px;
-      padding: 16px;
+      width: 380px;
+      max-width: 100%;
+      background: var(--bg-surface);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px;
       text-align: left;
+      box-shadow: var(--shadow-card);
     }
+
     .fx-panel h3 {
-      margin: 0 0 12px 0;
+      margin: 0 0 14px 0;
       font-size: 16px;
-      color: #60a5fa;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
+
+    .fx-panel h3 span.fx-tag {
+      font-size: 11px;
+      font-weight: 600;
+      color: #a5b4fc;
+      background: rgba(99, 102, 241, 0.15);
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
     .slider-group {
-      margin-bottom: 12px;
+      margin-bottom: 13px;
     }
+
     .slider-header {
       display: flex;
       justify-content: space-between;
       font-size: 13px;
-      margin-bottom: 4px;
-      color: #d1d5db;
+      margin-bottom: 5px;
+      color: #cbd5e1;
     }
+
+    .slider-value {
+      font-weight: 600;
+      color: var(--accent-cyan);
+      font-variant-numeric: tabular-nums;
+    }
+
     input[type="range"] {
       width: 100%;
-      accent-color: #3b82f6;
+      accent-color: var(--accent-indigo);
       cursor: pointer;
     }
+
     select, input[type="text"], textarea {
       width: 100%;
-      padding: 8px 10px;
-      border-radius: 6px;
-      background: #272733;
-      color: #fff;
-      border: 1px solid #3f3f52;
+      padding: 9px 11px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      border: 1px solid rgba(148, 163, 184, 0.24);
       font-family: inherit;
       font-size: 13px;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
-    select { margin-bottom: 12px; }
+
+    select:focus, input[type="text"]:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+    }
+
+    select {
+      margin-bottom: 14px;
+    }
+
+    /* Controls */
     .controls {
-      margin-top: 16px;
+      margin-top: 18px;
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
       gap: 10px;
     }
+
     button {
-      padding: 9px 16px;
+      padding: 10px 16px;
       font-size: 13.5px;
       font-weight: 600;
-      border: none;
-      border-radius: 6px;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
       cursor: pointer;
-      transition: opacity 0.15s ease;
+      transition: transform 0.12s ease, opacity 0.15s ease, box-shadow 0.15s ease;
     }
-    button:hover { opacity: 0.92; }
-    #btnStart { background: #22c55e; color: #052e16; }
-    #btnPlayMode { background: #6366f1; color: #fff; display: none; }
-    #btnPlayMode.chord-active { background: #a855f7; color: #fff; }
-    #btnMicToggle { background: #3b82f6; color: #fff; display: none; }
-    #btnMicToggle.muted { background: #4b5563; color: #e5e7eb; }
-    #btnRecord { background: #ef4444; color: #fff; display: none; }
-    #btnStop { background: #eab308; color: #1c1917; display: none; }
-    .btn-secondary { background: #313142; color: #e5e7eb; }
-    .btn-accent { background: #8b5cf6; color: #fff; }
+
+    button:hover {
+      opacity: 0.94;
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    #btnStart {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #052e16;
+      box-shadow: 0 6px 18px rgba(34, 197, 94, 0.28);
+    }
+
+    #btnPlayMode {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: #fff;
+      display: none;
+    }
+
+    #btnPlayMode.chord-active {
+      background: linear-gradient(135deg, #a855f7, #7e22ce);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(168, 85, 247, 0.35);
+    }
+
+    #btnMicToggle {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #fff;
+      display: none;
+    }
+
+    #btnMicToggle.muted {
+      background: #334155;
+      color: #cbd5e1;
+    }
+
+    #btnRecord {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: #fff;
+      display: none;
+    }
+
+    #btnStop {
+      background: linear-gradient(135deg, #eab308, #ca8a04);
+      color: #1c1917;
+      display: none;
+    }
+
+    .btn-secondary {
+      background: #243049;
+      color: #e2e8f0;
+      border-color: rgba(148, 163, 184, 0.2);
+    }
+
+    .btn-accent {
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      color: #fff;
+    }
+
     .status {
-      margin-top: 10px;
+      margin-top: 12px;
       font-size: 13px;
-      color: #9ca3af;
+      color: var(--text-secondary);
+      min-height: 20px;
     }
+
     .rec-badge {
       color: #f87171;
       font-weight: 700;
@@ -116,14 +334,17 @@
 
     /* Songbook & Teleprompter Section */
     .songbook-section {
-      max-width: 1020px;
-      margin: 22px auto 0 auto;
-      background: #1c1c24;
-      border: 1px solid #2e2e3a;
-      border-radius: 10px;
-      padding: 18px;
+      max-width: 1040px;
+      margin: 24px auto 0 auto;
+      background: var(--bg-surface);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 20px;
       text-align: left;
+      box-shadow: var(--shadow-card);
     }
+
     .songbook-header {
       display: flex;
       flex-wrap: wrap;
@@ -132,86 +353,113 @@
       gap: 12px;
       margin-bottom: 14px;
     }
+
     .songbook-header h3 {
       margin: 0;
       font-size: 17px;
-      color: #a78bfa;
+      color: #c4b5fd;
     }
+
     .song-toolbar {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       gap: 10px;
     }
+
     .song-toolbar select {
       width: auto;
-      min-width: 220px;
+      min-width: 245px;
       margin-bottom: 0;
     }
+
     .chord-guide {
-      background: #14141b;
-      border: 1px solid #2b2b38;
-      border-radius: 8px;
-      padding: 10px 14px;
+      background: rgba(11, 15, 25, 0.78);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
       margin-bottom: 12px;
       font-size: 13px;
       color: #cbd5e1;
     }
+
     .chord-pill {
       display: inline-block;
-      background: #27273a;
+      background: rgba(99, 102, 241, 0.16);
       color: #93c5fd;
-      border: 1px solid #3b3b54;
-      border-radius: 5px;
-      padding: 2px 8px;
+      border: 1px solid rgba(129, 140, 248, 0.35);
+      border-radius: 6px;
+      padding: 2px 9px;
       margin: 2px 4px 2px 0;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 12px;
     }
+
     .teleprompter-box {
-      background: #0e0e13;
-      border: 1px solid #2c2c3a;
-      border-radius: 8px;
+      background: #080b12;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
       padding: 18px;
-      max-height: 270px;
+      max-height: 280px;
       overflow-y: auto;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-size: 16px;
-      line-height: 1.75;
+      line-height: 1.8;
       white-space: pre-wrap;
-      color: #f9fafb;
+      color: #f8fafc;
     }
+
     .chord-tag {
-      color: #fbbf24;
+      color: var(--accent-amber);
       font-weight: 700;
     }
+
     .custom-song-form {
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid #2e2e3a;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-subtle);
       display: none;
     }
+
     .custom-song-form.active {
       display: block;
     }
+
     .form-row {
       margin-bottom: 10px;
     }
+
     .form-row label {
       display: block;
       font-size: 12.5px;
       color: #cbd5e1;
       margin-bottom: 4px;
     }
+
     .scroll-control {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       font-size: 12.5px;
-      color: #d1d5db;
+      color: #cbd5e1;
+      background: rgba(30, 41, 59, 0.65);
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
     }
+
     .scroll-control input[type="range"] {
-      width: 90px;
+      width: 84px;
+    }
+
+    @media (max-width: 680px) {
+      .app-header {
+        padding: 12px 14px;
+      }
+      .song-toolbar select {
+        width: 100%;
+        min-width: 0;
+      }
     }
   </style>
 
@@ -222,7 +470,33 @@
 </head>
 <body>
 
-  <h2>Piano Virtual + Chord Mode, Mic FX, Teleprompter & Recorder</h2>
+  <!-- Header & Custom GestureKeys Branding -->
+  <header class="app-header">
+    <div class="brand-logo">
+      <div class="brand-icon-wrap" aria-hidden="true">
+        <svg width="26" height="26" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="13" width="5" height="11" rx="1.5" fill="#38BDF8"/>
+          <rect x="11.5" y="9" width="5" height="15" rx="1.5" fill="#818CF8"/>
+          <rect x="20" y="14" width="5" height="10" rx="1.5" fill="#C084FC"/>
+          <path d="M4.5 7.5C8 4 12 10 15.5 6.5C19 3 22.5 7.5 24.5 5.5" stroke="#38BDF8" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="24.5" cy="5.5" r="2" fill="#FBBF24"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-title-row">
+          <h1 class="brand-name">GestureKeys</h1>
+          <span class="brand-badge">Studio v2</span>
+        </div>
+        <p class="brand-subtitle">Air-Touch Virtual Piano, Chord Mode, Mic FX, Teleprompter &amp; Recorder</p>
+      </div>
+    </div>
+
+    <div class="header-pills">
+      <span class="info-chip">✋ Deteksi Jari Telunjuk</span>
+      <span class="info-chip">⚡ Throttled Hand Tracking</span>
+      <span class="info-chip">🎙️ Live Mic FX &amp; .webm</span>
+    </div>
+  </header>
 
   <div class="main-layout">
     <div class="container">
@@ -231,9 +505,12 @@
     </div>
 
     <div class="fx-panel">
-      <h3>🎙️ Pengaturan Efek Mic</h3>
+      <h3>
+        <span>🎙️ Pengaturan Efek Mic</span>
+        <span class="fx-tag">Real-Time FX</span>
+      </h3>
 
-      <label for="micTone" style="font-size:13px; display:block; margin-bottom:5px; color:#d1d5db;">
+      <label for="micTone" style="font-size:13px; display:block; margin-bottom:5px; color:#cbd5e1;">
         Karakter Suara (Filter)
       </label>
       <select id="micTone">
@@ -245,7 +522,7 @@
       <div class="slider-group">
         <div class="slider-header">
           <span>Volume Mic (Gain)</span>
-          <span id="valGain">1.20x</span>
+          <span class="slider-value" id="valGain">1.20x</span>
         </div>
         <input id="micGain" type="range" min="0" max="2.5" step="0.05" value="1.2">
       </div>
@@ -253,7 +530,7 @@
       <div class="slider-group">
         <div class="slider-header">
           <span>Echo Delay Time</span>
-          <span id="valDelay">0.25s</span>
+          <span class="slider-value" id="valDelay">0.25s</span>
         </div>
         <input id="echoTime" type="range" min="0.05" max="0.9" step="0.01" value="0.25">
       </div>
@@ -261,7 +538,7 @@
       <div class="slider-group">
         <div class="slider-header">
           <span>Echo Feedback (Ulangan)</span>
-          <span id="valFeedback">45%</span>
+          <span class="slider-value" id="valFeedback">45%</span>
         </div>
         <input id="echoFeedback" type="range" min="0" max="0.85" step="0.01" value="0.45">
       </div>
@@ -269,7 +546,7 @@
       <div class="slider-group">
         <div class="slider-header">
           <span>Reverb (Ruang Gema)</span>
-          <span id="valReverb">35%</span>
+          <span class="slider-value" id="valReverb">35%</span>
         </div>
         <input id="reverbWet" type="range" min="0" max="0.9" step="0.01" value="0.35">
       </div>
@@ -277,19 +554,19 @@
   </div>
 
   <div class="controls">
-    <button id="btnStart">▶ Mulai Kamera, Mic & Audio</button>
+    <button id="btnStart">▶ Mulai Kamera, Mic &amp; Audio</button>
     <button id="btnPlayMode">🎹 Mode: Single Note</button>
     <button id="btnMicToggle">🎤 Mic Aktif</button>
     <button id="btnRecord">🔴 Mulai Rekam</button>
-    <button id="btnStop">⏹️ Stop & Simpan Video</button>
+    <button id="btnStop">⏹️ Stop &amp; Simpan Video</button>
   </div>
 
-  <div class="status" id="statusText">Klik "Mulai Kamera, Mic & Audio" lalu izinkan akses kamera serta mikrofon.</div>
+  <div class="status" id="statusText">Klik "Mulai Kamera, Mic &amp; Audio" lalu izinkan akses kamera serta mikrofon.</div>
 
   <!-- Bagian Chord & Lirik Teleprompter -->
   <section class="songbook-section">
     <div class="songbook-header">
-      <h3>🎼 Contekan Chord & Lirik</h3>
+      <h3>🎼 Contekan Chord &amp; Lirik</h3>
       <div class="song-toolbar">
         <select id="songSelect" aria-label="Pilih Lagu"></select>
         <button type="button" class="btn-secondary" id="btnAutoScroll">⏩ Auto-Scroll: OFF</button>
@@ -314,7 +591,7 @@
         <input type="text" id="newSongNotes" placeholder="Contoh: C = C4-E4-G4 | G = G4-B4-D5">
       </div>
       <div class="form-row">
-        <label for="newSongLyrics">Lirik & Chord (Tulis chord di dalam tanda kurung siku seperti [C], [G], [Am], [F])</label>
+        <label for="newSongLyrics">Lirik &amp; Chord (Tulis chord di dalam tanda kurung siku seperti [C], [G], [Am], [F])</label>
         <textarea id="newSongLyrics" rows="6" placeholder="[C] Di bawah langit senja&#10;[G] Kita duduk bersama&#10;[Am] Memainkan nada sederhana&#10;[F] Yang selalu membawa tawa"></textarea>
       </div>
       <button type="button" id="btnSaveSong" style="background:#22c55e; color:#052e16;">Simpan ke Daftar Lagu</button>
@@ -324,7 +601,7 @@
   <script>
     const videoElement = document.getElementById('webcam');
     const canvasElement = document.getElementById('output_canvas');
-    const canvasCtx = canvasElement.getContext('2d');
+    const canvasCtx = canvasElement.getContext('2d', { alpha: false });
 
     const btnStart = document.getElementById('btnStart');
     const btnPlayMode = document.getElementById('btnPlayMode');
@@ -371,6 +648,12 @@
     let activeNotesPlayed = [];
     let touchPulse = 0;
 
+    // State deteksi tangan & throttling untuk mencegah CPU/GPU overload
+    let latestFingerPoint = null;
+    let isDetectingHand = false;
+    let lastDetectionTime = 0;
+    const DETECTION_INTERVAL_MS = 55; // ~18 FPS deteksi tangan agar ringan & responsif
+
     const notes = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"];
     const keyWidth = canvasElement.width / notes.length;
     const touchLineY = 330;
@@ -388,6 +671,22 @@
     };
 
     const defaultSongs = [
+      {
+        title: "Mantan Terindah - Raisa (C Major)",
+        chords: ["C", "Dm", "Em", "F", "G", "Am"],
+        noteHints: "Chord Mode: C (C4), Dm (D4), Em (E4), F (F4), G (G4), Am (A4)",
+        lyrics:
+`[C] Mau dikatakan [Dm] apa lagi
+[Em] Kita takkan pernah [F] satu
+[C] Engkau ada di [Dm] sana
+[Em] Mau dikatakan [F] apa lagi
+
+[Am] Yang t'lah terjadi [Em] biarlah terjadi
+[F] Yang t'lah terurai [G] biarlah berlalu
+
+[C] Mau dikatakan [Dm] apa lagi
+[Em] Kita takkan pernah [F] satu`
+      },
       {
         title: "Twinkle Twinkle Little Star (C Major)",
         chords: ["C", "F", "G"],
@@ -473,7 +772,7 @@
 
       chordGuide.innerHTML = `
         <div><strong>Chord dipakai:</strong> ${pillsHtml || "-"}</div>
-        <div style="margin-top:5px;"><strong>Panduan Tuts:</strong> ${escapeHtml(song.noteHints || "")}</div>
+        <div style="margin-top:6px;"><strong>Panduan Tuts:</strong> ${escapeHtml(song.noteHints || "")}</div>
       `;
 
       const formattedLyrics = escapeHtml(song.lyrics || "").replace(
@@ -585,8 +884,11 @@
       activeNotesPlayed = [];
     }
 
-    // 1. Inisialisasi Audio Synth + Mic FX + Recorder Stream
+    // 1. Inisialisasi Audio Synth + Mic FX + Recorder Stream (non-blocking UI)
     btnStart.addEventListener('click', async () => {
+      btnStart.disabled = true;
+      statusText.textContent = "Menyiapkan audio, kamera & deteksi gestur...";
+
       await Tone.start();
 
       recorderDestination = Tone.context.createMediaStreamDestination();
@@ -606,14 +908,16 @@
         decay: 2.6,
         wet: parseFloat(reverbWetSlider.value)
       });
-      await reverbNode.ready;
 
-      mic.connect(micGainNode);
-      micGainNode.connect(micFilter);
-      micFilter.connect(echoDelay);
-      echoDelay.connect(reverbNode);
-      reverbNode.toDestination();
-      reverbNode.connect(recorderDestination);
+      // Jalankan inisialisasi reverb & hand tracking tanpa membekukan thread utama
+      reverbNode.ready.then(() => {
+        mic.connect(micGainNode);
+        micGainNode.connect(micFilter);
+        micFilter.connect(echoDelay);
+        echoDelay.connect(reverbNode);
+        reverbNode.toDestination();
+        reverbNode.connect(recorderDestination);
+      });
 
       try {
         await mic.open();
@@ -685,7 +989,7 @@
       }
     });
 
-    // 2. MediaPipe Hands
+    // 2. MediaPipe Hands dengan Throttling & Queue Guard
     function initHandTracking() {
       const hands = new Hands({
         locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
@@ -693,44 +997,70 @@
 
       hands.setOptions({
         maxNumHands: 1,
-        modelComplexity: 1,
+        modelComplexity: 0, // Model ringan agar deteksi cepat & stabil
         minDetectionConfidence: 0.7,
         minTrackingConfidence: 0.7
       });
 
-      hands.onResults(onResults);
+      hands.onResults((results) => {
+        isDetectingHand = false;
+        if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+          const indexFinger = results.multiHandLandmarks[0][8];
+          latestFingerPoint = {
+            x: (1 - indexFinger.x) * canvasElement.width,
+            y: indexFinger.y * canvasElement.height
+          };
+        } else {
+          latestFingerPoint = null;
+        }
+      });
 
       const camera = new Camera(videoElement, {
         onFrame: async () => {
-          await hands.send({ image: videoElement });
+          const now = performance.now();
+          // Lewati frame jika deteksi sebelumnya masih jalan atau belum melewati interval throttle
+          if (isDetectingHand || now - lastDetectionTime < DETECTION_INTERVAL_MS) {
+            return;
+          }
+          if (videoElement.readyState < 2) return;
+
+          isDetectingHand = true;
+          lastDetectionTime = now;
+          try {
+            await hands.send({ image: videoElement });
+          } catch (err) {
+            isDetectingHand = false;
+          }
         },
         width: 640,
         height: 480
       });
+
       camera.start();
+      requestAnimationFrame(renderCanvasLoop);
     }
 
-    // 3. Render Webcam Mirror + Garis Sentuh + Tuts + Deteksi Jari ke Canvas
-    function onResults(results) {
+    // 3. Render Loop Mulus (Webcam Mirror + Garis Sentuh + Tuts + Deteksi Jari)
+    function renderCanvasLoop() {
       canvasCtx.save();
       canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
-      canvasCtx.translate(canvasElement.width, 0);
-      canvasCtx.scale(-1, 1);
-      canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+      if (videoElement.readyState >= 2) {
+        canvasCtx.translate(canvasElement.width, 0);
+        canvasCtx.scale(-1, 1);
+        canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+      } else {
+        canvasCtx.fillStyle = "#090d16";
+        canvasCtx.fillRect(0, 0, canvasElement.width, canvasElement.height);
+      }
       canvasCtx.restore();
 
       drawPianoKeys();
 
-      if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-        const landmarks = results.multiHandLandmarks[0];
-        const indexFinger = landmarks[8];
-        const x = (1 - indexFinger.x) * canvasElement.width;
-        const y = indexFinger.y * canvasElement.height;
-
+      if (latestFingerPoint) {
+        const { x, y } = latestFingerPoint;
         const isTouchingKey = y > touchLineY;
 
-        // Efek ring sentuh saat memicu nada/chord
         if (touchPulse > 0.02) {
           canvasCtx.save();
           canvasCtx.strokeStyle = `rgba(34, 197, 94, ${touchPulse})`;
@@ -742,7 +1072,6 @@
           touchPulse *= 0.84;
         }
 
-        // Penanda ujung jari telunjuk
         canvasCtx.fillStyle = isTouchingKey ? '#22c55e' : '#ef4444';
         canvasCtx.beginPath();
         canvasCtx.arc(x, y, 12, 0, 2 * Math.PI);
@@ -770,6 +1099,8 @@
         releaseActiveNotes();
         activeKey = null;
       }
+
+      requestAnimationFrame(renderCanvasLoop);
     }
 
     function drawPianoKeys() {
@@ -810,8 +1141,8 @@
       canvasCtx.stroke();
 
       canvasCtx.setLineDash([]);
-      canvasCtx.fillStyle = 'rgba(15, 23, 42, 0.82)';
-      canvasCtx.fillRect(8, touchLineY - 24, 230, 20);
+      canvasCtx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+      canvasCtx.fillRect(8, touchLineY - 24, 236, 20);
       canvasCtx.fillStyle = chordMode ? '#e9d5ff' : '#bae6fd';
       canvasCtx.font = 'bold 12px system-ui, sans-serif';
       canvasCtx.textAlign = 'left';
@@ -869,7 +1200,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `piano-mic-fx-${Date.now()}.webm`;
+      a.download = `gesturekeys-${Date.now()}.webm`;
       a.click();
       URL.revokeObjectURL(url);
       statusText.textContent = "File video (.webm) berhasil disimpan!";
